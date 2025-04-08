@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Wereldkaart Quiz – Wateren & Werelddelen</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background-color: #f0f8ff; margin: 0; padding: 0; }
+    h1 { margin-top: 20px; }
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    img {
+      width: 100%;
+      max-width: 1000px;
+      height: auto;
+      display: block;
+    }
+    #quiz-box {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      width: 300px;
+      padding: 15px;
+      z-index: 10;
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px auto;
+      border: none;
+      border-radius: 5px;
+      background-color: #007acc;
+      color: white;
+      cursor: pointer;
+    }
+    #feedback {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    #score {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wereldkaart Quiz – Wateren & Werelddelen</h1>
+  <div class="container">
+    <div id="quiz-box">
+      <h2>Wat hoort bij <span id="vraag-label"></span>?</h2>
+      <input type="text" id="antwoord" placeholder="Typ hier je antwoord"><br>
+      <button onclick="controleerAntwoord()">Controleer</button>
+      <div id="feedback"></div>
+    </div>
+    <img src="Wereldkaartdeel2.jpg" alt="Wereldkaartdeel2">
+  </div>
+  <div id="score"></div>
+
+  <script>
+    const antwoorden = {
+      "a": "Atlantische Oceaan",
+      "b": "Amazone",
+      "c": "Caribische Zee",
+      "d": "Ganges",
+      "e": "Huang He",
+      "f": "Indische Oceaan",
+      "g": "Chang Jiang",
+      "h": "Mississippi",
+      "i": "Nijl",
+      "j": "Panamakanaal",
+      "k": "Perzische Golf",
+      "m": "Rode Zee",
+      "n": "Grote Oceaan",
+      "o": "Suezkanaal",
+      "p": "Wolga",
+      "I": "Afrika",
+      "II": "Noord-Amerika",
+      "III": "Zuid-Amerika",
+      "IV": "Antarctica",
+      "V": "Australië",
+      "VI": "Azië",
+      "VII": "Europa"
+    };
+
+    let labels = Object.keys(antwoorden);
+    let scoreGoed = 0;
+    let scoreFout = 0;
+    let huidigeLabel = "";
+    let tweedeKans = false;
+
+    function normalize(text) {
+      return text.toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9 ]/gi, "");
+    }
+
+    function volgendeVraag() {
+      if (labels.length === 0) {
+        document.getElementById("quiz-box").innerHTML = "<h2>Quiz voltooid!</h2><p>Score: " + scoreGoed + " goed, " + scoreFout + " fout.</p>";
+        return;
+      }
+      const index = Math.floor(Math.random() * labels.length);
+      huidigeLabel = labels.splice(index, 1)[0];
+      document.getElementById("vraag-label").textContent = huidigeLabel;
+      document.getElementById("antwoord").value = "";
+      document.getElementById("feedback").textContent = "";
+      tweedeKans = false;
+    }
+
+    function controleerAntwoord() {
+      const antwoord = normalize(document.getElementById("antwoord").value.trim());
+      const correct = normalize(antwoorden[huidigeLabel]);
+
+      if (antwoord === correct) {
+        scoreGoed++;
+        document.getElementById("feedback").textContent = "✅ Correct!";
+        document.getElementById("score").innerHTML = `Score: ${scoreGoed} goed, ${scoreFout} fout.`;
+        setTimeout(volgendeVraag, 1000);
+      } else if (!tweedeKans) {
+        tweedeKans = true;
+        document.getElementById("feedback").textContent = "❌ Probeer het nog eens.";
+        document.getElementById("antwoord").value = "";
+      } else {
+        scoreFout++;
+        document.getElementById("feedback").textContent = `❌ Fout. Antwoord: ${antwoorden[huidigeLabel]}`;
+        document.getElementById("score").innerHTML = `Score: ${scoreGoed} goed, ${scoreFout} fout.`;
+        setTimeout(volgendeVraag, 2000);
+      }
+    }
+
+    window.onload = volgendeVraag;
+  </script>
+</body>
+</html>
