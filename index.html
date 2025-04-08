@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -104,7 +103,7 @@
     function normalize(text) {
       return text.toLowerCase()
         .normalize("NFD")
-        .replace(/[̀-ͯ]/g, "")
+        .replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9 ]/gi, "");
     }
 
@@ -113,12 +112,23 @@
         document.getElementById("quiz-box").innerHTML = "<h2>Quiz voltooid!</h2><p>Score: " + scoreGoed + " goed, " + scoreFout + " fout.</p>";
         return;
       }
+
       const index = Math.floor(Math.random() * labels.length);
       huidigeLabel = labels.splice(index, 1)[0];
       document.getElementById("vraag-label").textContent = huidigeLabel;
       document.getElementById("antwoord").value = "";
       document.getElementById("feedback").textContent = "";
       tweedeKans = false;
+
+      // Dynamisch positioneren
+      const quizBox = document.getElementById("quiz-box");
+      if (huidigeLabel === "h" || huidigeLabel === "II") {
+        quizBox.style.left = "auto";
+        quizBox.style.right = "10px";
+      } else {
+        quizBox.style.right = "auto";
+        quizBox.style.left = "10px";
+      }
     }
 
     function controleerAntwoord() {
